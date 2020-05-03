@@ -21,7 +21,7 @@
             <div class="col-md-12">
                 <h2>Latest Mars News</h2>
                 <h3>{{ mars.title }}</h3>
-                <p>{{ mars.paragraph</p>
+                <p>{{ mars.paragraph }}</p>
             </div>
         </div>
 
@@ -31,9 +31,9 @@
                 <img src = "{{ mars.images }}" alt="Featured Image">
             </div>
 
-            <div class ="col-md-3">
+            <!--<div class ="col-md-3">
                 <p>{{ mars.weather }}</p>
-            </div>
+            </div>-->
 
             <div class ="col-md-3">
                 {{ mars.facts }}
@@ -48,7 +48,7 @@
                     <h3>{{ hemisphere.title }}</h3> 
             </div>
         </div>
-        {% end for %}
+        {% endfor %}
     </div>  
   </div>
 
