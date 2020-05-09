@@ -105,6 +105,8 @@ def mars_hemispheres():
     hemisphere_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
     browser.visit(hemisphere_url)
 
+    time.sleep(5)
+
     html = browser.html
     soup = BeautifulSoup(html, "html.parser")
 
