@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import os
 import re
+import time 
 import pandas as pd
 from splinter import Browser
 
@@ -18,11 +19,11 @@ def scrape():
 
     all_scraped_data["images"] = mars_images()
 
-    #all_scraped_data["weather"] = mars_weather()
+    all_scraped_data["weather"] = mars_weather()
     
     all_scraped_data["facts"] = mars_facts()
 
-    all_scraped_data["hemispheres"] = mars_hemispheres
+    all_scraped_data["hemispheres"] = mars_hemispheres()
 
     return(all_scraped_data)
 
@@ -32,16 +33,19 @@ def mars_news():
     news_url ="https://mars.nasa.gov/news/"
     browser.visit(news_url)
 
+    time.sleep(5)
+    
     html = browser.html
     soup = BeautifulSoup(html, "html.parser")
     
-    news_title = soup.find('div', class_= 'content_title').text.strip()
-    news_p = soup.find('div', class_= 'rollover_description_inner').text.strip()
+    article = soup.find('div', class_='list_text')
+    title = article.find('div', class_='content_title').text
+    
+    paragraph = soup.find('div', class_= 'article_teaser_body').text
 
-    news = [news_title, news_p]
-
+    news = [title, paragraph]
+    
     return news
-
 
 def mars_images():
 
@@ -62,20 +66,23 @@ def mars_images():
     return featured_image_url
 
 
-#def mars_weather():
+def mars_weather():
 
-    #twitter_url = "https://twitter.com/marswxreport?lang=en"
-    #browser.visit(twitter_url) 
-    
-    #html = browser.html
-    #soup = BeautifulSoup(html, "html.parser") 
+    twitter_url = "https://twitter.com/marswxreport?lang=en"
+    browser.visit(twitter_url) 
 
-    #tweet = soup.find_all('div', class_="js-tweet-text-container")[1]
+    time.sleep(5)
+
+    html = browser.html
+    soup = BeautifulSoup(html, "html.parser")
+
+    try:
+        mars_weather = soup.find("p", "tweet-text").get_text()
+    except:
+        pattern = re.compile(r'InSight') 
+        mars_weather = soup.find('span', text=pattern).text
     
-    #for p in tweet.find_all('p', class_="TweetTextSize TweetTextSize--normal js-tweet-text tweet-text"):
-        #mars_weather = p.text
-    
-    #return mars_weather
+    return mars_weather
 
 
 def mars_facts():
@@ -89,13 +96,7 @@ def mars_facts():
     table.columns = ['Mars Info', 'Values']
     table = table.set_index('Mars Info')
     mars_table = table.to_html()
-    #df = tables[0]
-    #df.columns = ['Mars Info', 'Values']
-    #df = df.set_index('Mars Info', inplace = True)
 
-    #html_table = df.to_html()
-    #html_table = html_table.replace('\n','')
-    
     return mars_table
 
 
@@ -127,8 +128,8 @@ def mars_hemispheres():
         download = soup.find('div', class_ = 'downloads')
         img_url = download.find('a')['href']
         
-        dict = {"title": title, "img_url": img_url}
-        hemisphere_image_urls.append(dict)
+        mars_dict = {"title": title, "img_url": img_url}
+        hemisphere_image_urls.append(mars_dict)
     
     return hemisphere_image_urls
 
